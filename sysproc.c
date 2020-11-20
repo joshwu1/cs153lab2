@@ -89,3 +89,17 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_sprio(void) // handler to update process
+{
+  int priority;
+  if(argint(0, &priority) < 0){
+	return -1;
+     }
+  sprio(priority);
+  return 0;
+}
+
+
+

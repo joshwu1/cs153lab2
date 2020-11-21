@@ -327,39 +327,37 @@ scheduler(void)
   struct proc *cnt;
   struct proc *max;
   struct cpu *c = mycpu();
+	
   c->proc = 0;
   
   for(;;){
     // Enable interrupts on this processor.
     sti();
 
-    // Loop over process table looking for process to run.
-    // Implement higher priority runs first
+    // Implementing higher priority runs first
     acquire(&ptable.lock);
 
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
 
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us
       max = p;
 
       for(cnt = ptable.proc; cnt < &ptable.proc[NPROC]; cnt++){
-	if(cnt->state!=RUNNABLE || cnt->priority >= max->priority)
+	if(cnt->state!=RUNNABLE || cnt->priority >= max->priority){
 		continue;
-
 
 		max = cnt;
 	}
+	}
 
       for(cnt = ptable.proc; cnt < &ptable.proc[NPROC]; cnt++){
-	if((cnt->state!=RUNNABLE && cnt->state!=SLEEPING) || cnt==max)
+	if((cnt->state!=RUNNABLE && cnt->state!=SLEEPING) || cnt==max){
 		continue;
-	
-	if(cnt->priority > 0 && cnt->state==RUNNABLE)
+	}
+	if(cnt->priority > 0 && cnt->state==RUNNABLE){
 		cnt->priority--;
+	}
 	}
 
 	c->proc = max;
@@ -369,17 +367,12 @@ scheduler(void)
     	swtch(&(c->scheduler), max->context);
     	switchkvm();
 
-	if(max->priority < 31)
+	if(max->priority < 31){
 		max->priority++;
-
-
 		c->proc = 0;
+	}
 }
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-  
-    
+   
     release(&ptable.lock);
   }
 }
@@ -565,7 +558,6 @@ procdump(void)
 void
 sprio(int priority)
 {
-
   struct proc *curproc = myproc();
   acquire(&ptable.lock);
   curproc->priority = priority;

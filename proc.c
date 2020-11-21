@@ -346,7 +346,6 @@ scheduler(void)
       for(cnt = ptable.proc; cnt < &ptable.proc[NPROC]; cnt++){
 	if(cnt->state!=RUNNABLE || cnt->priority >= max->priority){
 		continue;
-
 		max = cnt;
 	}
 	}
